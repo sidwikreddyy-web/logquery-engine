@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: logquery-postgres
+    environment:
+      POSTGRES_DB: logquery
+      POSTGRES_USER: logquery
+      POSTGRES_PASSWORD: logquery
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redpanda:
+    image: redpandadata/redpanda:v24.2.8
+    container_name: logquery-redpanda
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp=1
+      - --memory=512M
+      - --reserve-memory=0M
+      - --node-id=0
+      - --check=false
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr=PLAINTEXT://localhost:9092
+    ports:
+      - "9092:9092"
+      - "9644:9644"
+
+  floci:
+    image: floci/floci:latest
+    container_name: logquery-floci
+    ports:
+      - "4567:4566"
+
+volumes:
+  postgres_data:

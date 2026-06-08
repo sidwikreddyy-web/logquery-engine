@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: logquery-engine
+  datasource:
+    url: jdbc:postgresql://localhost:5433/logquery
+    username: logquery
+    password: logquery
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: logquery-engine
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+server:
+  port: 8081
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logquery:
+  kafka:
+    topic: application-logs
+  archive:
+    bucket: logquery-archive
+  aws:
+    endpoint: http://localhost:4567
+    region: us-east-1
