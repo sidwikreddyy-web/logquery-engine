@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface LogRecordRepository extends JpaRepository<LogRecord, UUID>, JpaSpecificationExecutor<LogRecord> {
-    boolean existsByEventId(String eventId);
+    Optional<LogRecord> findByEventId(String eventId);
 
     List<LogRecord> findByEventTimestampBeforeAndArchivedFalseOrderByEventTimestampAsc(Instant before);
 }

@@ -26,7 +26,7 @@ flowchart LR
 - Search by service, severity, time range, and keyword.
 - Return paginated results sorted by event time.
 - Archive older logs to S3-style object storage through Floci.
-- Keep ingestion idempotent with a unique `eventId`.
+- Keep ingestion idempotent with a unique `eventId` lookup before writing indexed terms.
 
 ## Run Locally
 

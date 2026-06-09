@@ -3,7 +3,6 @@ package com.sidwik.logquery.logs;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sidwik.logquery.config.LogQueryProperties;
-import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.domain.Page;
@@ -66,15 +65,12 @@ public class LogService {
 
     @Transactional
     public LogResponse ingest(IngestLogRequest request) {
-        if (logRecordRepository.existsByEventId(request.eventId())) {
-            return logRecordRepository.findAll((root, query, builder) ->
-                            builder.equal(root.get("eventId"), request.eventId()))
-                    .stream()
-                    .findFirst()
-                    .map(LogResponse::from)
-                    .orElseThrow();
-        }
+        return logRecordRepository.findByEventId(request.eventId())
+                .map(LogResponse::from)
+                .orElseGet(() -> persist(request));
+    }
 
+    private LogResponse persist(IngestLogRequest request) {
         Instant now = Instant.now(clock);
         LogRecord record = new LogRecord(
                 UUID.randomUUID(),
